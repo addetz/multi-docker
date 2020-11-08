@@ -17,7 +17,7 @@ function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Adelina is the best! Multi docker bbz!
+            Adelina is the best! Multi docker bbz! <3
           </a>
           <Link to="/">Home</Link>
           <Link to="/otherpage">Other Page</Link>
