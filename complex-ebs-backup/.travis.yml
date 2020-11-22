@@ -1,0 +1,35 @@
+sudo: required
+language: generic
+services: 
+    - docker
+
+before_install:
+    - docker build -t classicaddetz/react-test -f ./client/Dockerfile.dev ./client
+
+script: 
+    - docker run -e CI=true classicaddetz/react-test npm test
+
+after_success:
+    - docker build -t classicaddetz/multi-client ./client
+    - docker build -t classicaddetz/multi-nginx ./nginx
+    - docker build -t classicaddetz/multi-server ./server
+    - docker build -t classicaddetz/multi-worker ./worker
+    # Log into docker cli
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # Take those images and push them to dockerhub
+    - docker push classicaddetz/multi-client
+    - docker push classicaddetz/multi-nginx
+    - docker push classicaddetz/multi-server
+    - docker push classicaddetz/multi-worker
+
+deploy:
+    provider: elasticbeanstalk
+    region: 'us-east-2'
+    app: 'multi-docker'
+    env: 'MultiDocker-env'
+    bucket_name: 'elasticbeanstalk-us-east-2-246331356713'
+    bucket_path: 'docker-multi'
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
