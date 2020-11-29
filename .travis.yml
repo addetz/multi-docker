@@ -4,12 +4,12 @@ services:
 env:
   global:
     - SHA=$(git rev-parse HEAD)
-before_install:
+ before_install:
   - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
   - curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-319.0.0-linux-x86_64.tar.gz 
   - tar -xzf google-cloud-sdk-*
   - ./google-cloud-sdk/install.sh
-  - ./google-cloud-sdk/bin/gcloud init --console-only
+  - ./google-cloud-sdk/bin/gcloud init --console-only --skip-diagnostics
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
   - gcloud config set project multi-k8s-297018
